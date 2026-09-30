@@ -16,9 +16,11 @@ import { config } from "../config.js";
  */
 export function registerTools(pi: ExtensionAPI): void {
   // dev_checkpoint - Mark workflow phase completion
-  pi.registerTool("dev_checkpoint", {
+  pi.registerTool({
+    name: "dev_checkpoint",
+    label: "Workflow checkpoint",
     description: "Mark workflow phase completion or progress",
-    inputSchema: Type.Object({
+    parameters: Type.Object({
       phase: StringEnum(["alignment", "planning", "issue-completed", "all-completed"], {
         description: "Which phase is completed",
       }),
@@ -30,7 +32,7 @@ export function registerTools(pi: ExtensionAPI): void {
         description: "Completed issue number (for issue-completed)" 
       })),
     }),
-    handler: async (input) => {
+    execute: async (_toolCallId, input) => {
       const { phase, summary, issues, issue } = input;
 
       switch (phase) {
@@ -124,14 +126,16 @@ export function registerTools(pi: ExtensionAPI): void {
   });
 
   // github_create_issue
-  pi.registerTool("github_create_issue", {
+  pi.registerTool({
+    name: "github_create_issue",
+    label: "Create GitHub issue",
     description: "Create a GitHub issue",
-    inputSchema: Type.Object({
+    parameters: Type.Object({
       title: Type.String({ description: "Issue title" }),
       body: Type.String({ description: "Issue body in Markdown" }),
       labels: Type.Optional(Type.Array(Type.String(), { description: "Issue labels" })),
     }),
-    handler: async (input) => {
+    execute: async (_toolCallId, input) => {
       const { title, body, labels } = input;
       
       const args = ["issue", "create", "--title", title, "--body", body];
@@ -159,15 +163,17 @@ export function registerTools(pi: ExtensionAPI): void {
   });
 
   // github_create_pr
-  pi.registerTool("github_create_pr", {
+  pi.registerTool({
+    name: "github_create_pr",
+    label: "Create GitHub PR",
     description: "Create a GitHub pull request",
-    inputSchema: Type.Object({
+    parameters: Type.Object({
       title: Type.String({ description: "PR title" }),
       body: Type.String({ description: "PR body" }),
       base: Type.Optional(Type.String({ description: "Base branch" })),
       draft: Type.Optional(Type.Boolean({ description: "Create as draft" })),
     }),
-    handler: async (input) => {
+    execute: async (_toolCallId, input) => {
       const { title, body, base, draft } = input;
       
       const args = ["pr", "create", "--title", title, "--body", body];
@@ -194,15 +200,17 @@ export function registerTools(pi: ExtensionAPI): void {
   });
 
   // github_merge_pr
-  pi.registerTool("github_merge_pr", {
+  pi.registerTool({
+    name: "github_merge_pr",
+    label: "Merge GitHub PR",
     description: "Merge a GitHub pull request",
-    inputSchema: Type.Object({
+    parameters: Type.Object({
       number: Type.String({ description: "PR number" }),
       strategy: Type.Optional(StringEnum(["squash", "merge", "rebase"], {
         description: "Merge strategy",
       })),
     }),
-    handler: async (input) => {
+    execute: async (_toolCallId, input) => {
       const { number, strategy = config.merge_strategy } = input;
       
       const args = ["pr", "merge", number];
