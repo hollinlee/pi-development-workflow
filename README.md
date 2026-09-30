@@ -1,280 +1,185 @@
-# pi-github-extensions
+# pi-development-workflow
 
-Comprehensive GitHub workflow automation for Pi coding agent - Issue generation, implementation, PR management, review handling, and merge automation.
+Complete development workflow automation for Pi coding agent.
+
+**从想法到生产的完整流程**: align → plan → issue → implement → pr → review → merge
+
+## Philosophy
+
+你有一个粗浅的想法 → 通过不断对齐完善架构 → 确定后自动完成实现
 
 ## Features
 
-- **Issue Management**: Generate and track GitHub issues from plans
-- **End-to-end Autopilot**: Automatic implementation, verification, commit, PR, review, and merge
-- **Queue Execution**: Process multiple issues in order with runtime guard
-- **Recovery Entry Points**: Resume from any workflow stage
-- **Network Resilience**: Automatic proxy detection and retry
-- **Structured Configuration**: File-based settings with runtime overrides
-- **Subagent Integration**: Leverage pi-subagents for parallel verification
-- **Review Compatibility**: Works alongside pi-pr-review
+### 🎯 Alignment (对齐)
+- Grilling mode: 高价值问题追问
+- Wayfinding mode: 探索式导航
+- Domain modeling: 术语、边界、不变量
+- Private context: `.pi/alignment/` 工作区
+- Readiness check: 确保需求明确
 
-## Architecture
+### 📋 Planning (计划)
+- 集成 `pi-goal-x` 进行目标管理
+- Vertical slices 分解
+- GitHub issue 生成
+- 验收标准定义
 
-**Mixed approach** inspired by pi-pr-review:
-- **Tools**: Structured GitHub operations (issue, PR, review, merge)
-- **Subagents**: Parallel verification and validation tasks
-- **Config**: Persistent workflow settings
-- **Skills**: Contextual guidance and templates
-- **Runtime Guard**: Automatic queue continuation
+### ✅ To-do Management
+- 集成 `@juicesharp/rpiv-todo`
+- 实时任务追踪
+- 队列状态可视化
+
+### 🔄 Implementation (实现)
+- 自动化队列执行
+- Subagent 验证 (via `pi-subagents`)
+- Runtime guard 续行
+
+### 👀 Review (审查)
+- AI subagent review (`lingshuan.gpt-6.1-sol`)
+- 代码审查、问题分析、根因诊断
+- 结构化反馈
+
+### 🚀 GitHub Workflow
+- Issue → PR 自动化
+- Review 处理
+- Merge 管理
+- 网络恢复
 
 ## Install
 
 ```bash
-pi install git:github.com/hollinlee/pi-github-extensions
-```
-
-Or add to your project:
-
-```bash
-npm install git+https://github.com/hollinlee/pi-github-extensions.git
+pi install git:github.com/hollinlee/pi-development-workflow
 ```
 
 ## Quick Start
 
-### 1. Configure workflow
+### 1. 从想法开始
 
 ```bash
-/gh-config verification_mode=auto
-/gh-config auto_merge=false
-/gh-config network_retry=true
+/dev "我想做一个用户认证系统"
 ```
 
-### 2. Generate issues from plan
+Agent 进入 **alignment 模式**，和你对齐：
+- 目标和范围
+- 技术选型  
+- 约束条件
+- 验收标准
 
-```bash
-/gh-issues from-plan
-# Or specify scope
-/gh-issues "auth system" "user profile"
-```
+### 2. 确认 alignment
 
-### 3. Execute queue
+完成对齐后，Agent 会输出 **Alignment Brief** 并询问确认。
 
-```bash
-/gh-work #123 #124 #125
-```
+### 3. 自动执行
 
-The autopilot will:
-1. Implement each issue
-2. Run verification
-3. Commit changes
-4. Create PR
-5. Handle review feedback
-6. Merge when ready
-7. Move to next issue
-
-### 4. Recovery from any stage
-
-```bash
-/gh-ship      # Ship existing implementation
-/gh-pr        # Create PR from current branch
-/gh-review    # Handle review feedback
-/gh-merge     # Merge ready PR
-```
+确认后自动：
+1. 生成 plan
+2. 创建 GitHub issues
+3. 实现队列执行
+4. 每个 issue: implement → verify → PR → AI review → merge
+5. 完成后继续下一个
 
 ## Commands
 
 | Command | Description |
 |---------|-------------|
-| `/gh-config <key>=<value>` | Configure workflow settings |
-| `/gh-config show` | Display current configuration |
-| `/gh-issues from-plan` | Generate issues from current plan |
-| `/gh-issues <scope...>` | Generate issues for specific scope |
-| `/gh-work <issue...>` | Execute issue queue (autopilot) |
-| `/gh-ship` | Ship existing implementation |
-| `/gh-pr` | Create PR from current branch |
-| `/gh-review` | Handle PR review feedback |
-| `/gh-merge` | Merge ready PR |
-| `/gh-status` | Show autopilot status |
-| `/gh-stop` | Stop autopilot |
+| `/dev <idea>` | 统一入口：从想法开始工作流 |
+| `/grill` | 纯对齐模式（不自动进入实现） |
+| `/plan` | 从当前 alignment 生成 plan |
+| `/dev-status` | 查看工作流状态 |
+| `/dev-config` | 配置工作流设置 |
+| `/dev-stop` | 停止自动执行 |
 
-## Tools
+## Workflow Phases
 
-### github_create_issue
-Create GitHub issue with title, body, and labels.
-
-### github_create_pr
-Create pull request with title, body, and optional reviewers.
-
-### github_update_pr
-Update PR description or metadata.
-
-### github_review_reply
-Reply to PR review comments.
-
-### github_merge_pr
-Merge PR with specified strategy (squash/merge/rebase).
-
-### github_checkpoint
-Record autopilot progress (internal, called by autopilot).
-
-## Configuration
-
-Settings are stored in `~/.pi/agent/extensions/pi-github-extensions/config.json`:
-
-```json
-{
-  "verification_mode": "auto",
-  "auto_merge": false,
-  "network_retry": true,
-  "branch_prefix_map": {
-    "feat": "feature",
-    "fix": "bugfix",
-    "refactor": "refactor",
-    "docs": "documentation"
-  },
-  "merge_strategy": "squash",
-  "delete_branch_after_merge": true,
-  "conventional_commits": true,
-  "commit_subject_lang": "zh",
-  "issue_pr_lang": "zh"
-}
+### Phase 1: Alignment 🎯
 ```
-
-### Settings
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| `verification_mode` | `auto` | `auto`, `manual`, or `skip` |
-| `auto_merge` | `false` | Auto-merge when ready |
-| `network_retry` | `true` | Auto-retry on network failure |
-| `merge_strategy` | `squash` | `squash`, `merge`, or `rebase` |
-| `delete_branch_after_merge` | `true` | Delete branch after merge |
-| `conventional_commits` | `true` | Use conventional commit format |
-| `commit_subject_lang` | `zh` | Commit subject language |
-| `issue_pr_lang` | `zh` | Issue/PR description language |
-
-## Workflow
-
-### Full Autopilot
-
-```
-/gh-issues from-plan
-  ↓ (user confirms)
-/gh-work #123 #124 #125
+粗浅想法
   ↓
+高价值问题追问
+  ↓
+域模型建立
+  ↓
+Alignment Brief
+  ↓
+用户确认 ✓
+```
+
+### Phase 2: Planning 📋
+```
+自动生成 plan
+  ↓
+分解 vertical slices
+  ↓
+生成 GitHub issue drafts
+  ↓
+用户确认 ✓
+  ↓
+创建 issues
+```
+
+### Phase 3: Implementation 🔄
+```
 For each issue:
-  1. Implementation → 2. Verification → 3. Commit → 4. PR
-  5. Review handling → 6. Merge → 7. Sync main → 8. Next issue
+  实现 → Subagent 验证 → Commit
+  ↓
+  Create PR
+  ↓
+  AI Review (lingshuan.gpt-6.1-sol)
+  ↓
+  修复（如需要）
+  ↓
+  Merge
+  ↓
+  下一个 issue
 ```
-
-### Recovery Scenarios
-
-**Existing implementation, no issue**:
-```bash
-/gh-ship
-# Generates issue draft → confirm → create PR → review → merge
-```
-
-**Branch exists, need PR**:
-```bash
-/gh-pr
-# Commit → push → create PR → review → merge
-```
-
-**PR has review feedback**:
-```bash
-/gh-review
-# Analyze feedback → implement fixes → verify → update PR → continue
-```
-
-**PR ready to merge**:
-```bash
-/gh-merge
-# Check conditions → merge → delete branch → sync main
-```
-
-## Runtime Guard
-
-The autopilot uses a runtime guard to ensure queue completion:
-
-- Tracks progress via `github_checkpoint` tool
-- Auto-continues after agent settle
-- Stops on human decision gates
-- Prevents stalled continuations (max 8)
-
-Human gates:
-- Scope expansion beyond issue
-- Breaking changes
-- Security concerns
-- Ambiguous requirements
-
-## Network Resilience
-
-Automatic recovery on GitHub API/git failures:
-
-1. Check proxy status
-2. Auto-enable configured proxy if available
-3. Retry operation once
-4. Report failure and recovery entry point if still failing
-
-No repeated user confirmation for proxy enablement.
-
-## Privacy Boundaries
-
-`.pi/alignment/` files are private context.
-
-**Hard rules**:
-- Issues, commits, PRs, and reviews MUST NOT reference `.pi/alignment` paths
-- Can read alignment for context but must rewrite as public content
-- GitHub content uses configured language (default: Chinese)
-- Commands, paths, branch prefixes, API names remain English
 
 ## Integration
 
-### With pi-pr-review
+### With pi-goal-x
+长期目标管理和完成审计自动集成
 
-pi-github-extensions and pi-pr-review work independently:
-
-- **pi-github-extensions**: Issue → PR creation and basic review handling
-- **pi-pr-review**: Deep parallel PR review
-
-You can use both:
-1. `/gh-work #123` creates and implements PR
-2. `/pr-review <pr-number>` for deep review (optional)
-3. `/gh-review` handles feedback and continues merge
+### With rpiv-todo
+实时 to-do overlay 自动显示当前任务
 
 ### With pi-subagents
+- 验证任务委派
+- AI code review (lingshuan.gpt-6.1-sol)
 
-Verification tasks delegate to subagents:
-- Parallel test execution
-- Lint/format checks
-- Build verification
-- Security scans
+## Configuration
+
+```json
+{
+  "alignment_mode": "auto",
+  "auto_plan_after_align": true,
+  "auto_implement_after_plan": false,
+  "review_with_ai": true,
+  "ai_reviewer_model": "lingshuan.gpt-6.1-sol",
+  "merge_strategy": "squash",
+  "conventional_commits": true
+}
+```
+
+## Privacy Boundaries
+
+`.pi/alignment/` 是私有工作区：
+- Issues, commits, PRs 不得引用 `.pi/alignment` 路径
+- Agent 可读取 alignment 但必须改写为公开内容
+- 用户明确要求时才提升到公开文档
 
 ## Requirements
 
 - Pi coding agent >= 0.85.0
 - `gh` CLI installed and authenticated
 - Git repository with GitHub remote
-- `pi-subagents` package (auto-installed as peer dependency)
 
-## Development
+## Credits
 
-```bash
-git clone git@github.com:hollinlee/pi-github-extensions.git
-cd pi-github-extensions
-npm install
-npm run build
-npm test
-```
-
-### Local Testing
-
-```bash
-pi -e /path/to/pi-github-extensions/src/index.ts
-```
+Architecture integrates:
+- oh-my-pi alignment/github-workflow - Original implementation
+- pi-pr-review - Tiered subagent review concept
+- pi-goal-x - Goal management
+- rpiv-todo - To-do tracking
+- pi-subagents - Subagent orchestration
 
 ## License
 
 MIT
-
-## Credits
-
-Architecture inspired by:
-- [pi-pr-review](https://github.com/MasuRii/pi-pr-review) - Tiered subagent review architecture
-- oh-my-pi github-workflow - Original autopilot implementation

@@ -1,24 +1,23 @@
 {
-  "name": "pi-github-extensions",
+  "name": "pi-development-workflow",
   "version": "1.0.0",
-  "description": "Comprehensive GitHub workflow automation for Pi coding agent",
+  "description": "Complete development workflow for Pi coding agent - from alignment to merge",
   "type": "module",
   "keywords": [
     "pi-package",
     "pi",
     "coding-agent",
-    "github",
     "workflow",
-    "automation",
-    "issues",
-    "pull-request",
-    "merge"
+    "alignment",
+    "planning",
+    "github",
+    "automation"
   ],
   "license": "MIT",
   "author": "hollinlee",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hollinlee/pi-github-extensions.git"
+    "url": "git+https://github.com/hollinlee/pi-development-workflow.git"
   },
   "files": [
     "src",
@@ -28,18 +27,22 @@
   ],
   "pi": {
     "extensions": ["./src/index.ts"],
-    "skills": ["./skills/github-workflow"]
+    "skills": ["./skills"]
   },
   "scripts": {
     "build": "tsc --noEmit",
     "test": "node --test src/**/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@juicesharp/rpiv-todo": "^2.11.0",
+    "pi-goal-x": "^0.31.9",
+    "pi-subagents": "^0.55.0"
+  },
   "peerDependencies": {
     "@earendil-works/pi-ai": "*",
     "@earendil-works/pi-coding-agent": "*",
-    "@earendil-works/pi-tui": "*",
-    "pi-subagents": "^0.55.0"
+    "@earendil-works/pi-tui": "*"
   },
   "devDependencies": {
     "@earendil-works/pi-coding-agent": "^0.85.0",

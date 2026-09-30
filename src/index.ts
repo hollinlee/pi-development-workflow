@@ -1,40 +1,45 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-import { registerTools } from "./tools/index.js";
-import { registerCommands } from "./commands/index.js";
-import { setupAutopilot } from "./autopilot/index.js";
 import { loadConfig } from "./config.js";
+import { registerCommands } from "./commands/index.js";
+import { registerTools } from "./tools/index.js";
+import { setupWorkflowOrchestrator } from "./workflow/orchestrator.js";
 
 /**
- * Pi GitHub Extensions
+ * Pi Development Workflow
  * 
- * Comprehensive GitHub workflow automation for Pi coding agent.
- * Issue generation, implementation, PR management, review handling, and merge automation.
+ * Complete development workflow automation for Pi coding agent.
+ * From alignment to merge: align → plan → issue → implement → pr → review → merge
  * 
  * Architecture:
- * - Tools: Structured GitHub operations
- * - Subagents: Parallel verification (via pi-subagents)
- * - Config: Persistent workflow settings
- * - Skills: Contextual guidance
- * - Runtime Guard: Automatic queue continuation
+ * - Alignment: Goal alignment and domain modeling (from oh-my-pi)
+ * - Planning: Plan generation and issue creation
+ * - Implementation: Automated queue execution with subagent verification
+ * - Review: AI code review via pi-subagents (lingshuan.gpt-6.1-sol)
+ * - GitHub: PR management and merge automation
  * 
- * Inspired by:
- * - pi-pr-review (tiered subagent architecture)
- * - oh-my-pi github-workflow (autopilot implementation)
+ * Integration:
+ * - pi-goal-x: Goal management
+ * - @juicesharp/rpiv-todo: To-do tracking
+ * - pi-subagents: Subagent orchestration and AI review
+ * 
+ * Credits:
+ * - oh-my-pi alignment/github-workflow - Original implementation
+ * - pi-pr-review - Tiered subagent review concept
  */
-export default function githubExtensions(pi: ExtensionAPI): void {
+export default function developmentWorkflow(pi: ExtensionAPI): void {
   // Load persisted configuration
   loadConfig().catch(console.warn);
 
-  // Register GitHub tools
+  // Register tools
   registerTools(pi);
 
   // Register commands
   registerCommands(pi);
 
-  // Setup autopilot runtime guard
-  setupAutopilot(pi);
+  // Setup workflow orchestrator
+  setupWorkflowOrchestrator(pi);
 }
 
 // Re-export types
-export type { GithubConfig } from "./config.js";
-export type { AutopilotState } from "./autopilot/state.js";
+export type { WorkflowConfig } from "./config.js";
+export type { WorkflowState, WorkflowPhase } from "./workflow/state.js";
