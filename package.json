@@ -1,0 +1,49 @@
+{
+  "name": "pi-github-extensions",
+  "version": "1.0.0",
+  "description": "Comprehensive GitHub workflow automation for Pi coding agent",
+  "type": "module",
+  "keywords": [
+    "pi-package",
+    "pi",
+    "coding-agent",
+    "github",
+    "workflow",
+    "automation",
+    "issues",
+    "pull-request",
+    "merge"
+  ],
+  "license": "MIT",
+  "author": "hollinlee",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hollinlee/pi-github-extensions.git"
+  },
+  "files": [
+    "src",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "extensions": ["./src/index.ts"],
+    "skills": ["./skills/github-workflow"]
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "node --test src/**/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-ai": "*",
+    "@earendil-works/pi-coding-agent": "*",
+    "@earendil-works/pi-tui": "*",
+    "pi-subagents": "^0.55.0"
+  },
+  "devDependencies": {
+    "@earendil-works/pi-coding-agent": "^0.85.0",
+    "@types/node": "^22.0.0",
+    "typescript": "^5.7.2"
+  }
+}
